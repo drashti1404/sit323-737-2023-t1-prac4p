@@ -12,14 +12,31 @@ const logger = winston.createLogger({
       new winston.transports.File({ filename: 'combined.log' }),
     ],
   });
-  
+
   if (process.env.NODE_ENV !== 'production') {
     logger.add(new winston.transports.Console({
       format: winston.format.simple(),
     }));
   }
+  const { passport, generateToken } = require('./auth');
 
-const checkNumbers = (n1,n2,req,res) => {
+  // API endpoint for user login
+  app.post('/login', function(req, res) {
+  const username= req.query.username;
+  
+  // Authenticate user credentials and generate JWT token
+if (username === 'rosy') {
+    logger.info('Authentication successful');
+    const token = generateToken(username);
+  res.json({ token });
+  } else {
+  logger.error("Invalid usename");
+  res.status(401).json({ message: 'Authentication failed.' });
+  }
+  });
+
+
+  const checkNumbers = (n1,n2,req,res) => {
   var flag = false
   try{
     if(isNaN(n1)) {
@@ -45,6 +62,7 @@ const checkNumbers = (n1,n2,req,res) => {
 }
 
 const add= (n1,n2) => {
+    console.log("Entered function");
     return n1+n2;
 }
 
@@ -60,15 +78,21 @@ const div= (n1,n2) => {
   return n1/n2;
 }
 
-app.get("/add", (req,res)=>{
+
+
+app.get("/add", passport.authenticate('jwt', { session: false }), (req, res) => {
+    console.log("Entered add");
     try{
+        console.log("Entered try");
       const n1= parseFloat(req.query.n1); 
       const n2= parseFloat(req.query.n2);
       logger.info('Parameters '+n1+' and '+n2+' received for addition');
       const flag = checkNumbers(n1,n2,req,res);
       if(flag == true)
       {
+        console.log("Entered if");
         const result = add(n1,n2);
+        console.log("Add returned");
         res.status(200).json({statuscocde:200, data: result }); 
       }
     } catch(error) { 
@@ -76,7 +100,7 @@ app.get("/add", (req,res)=>{
         res.status(500).json({statuscocde:500, msg: error.toString() })
       }
 });
-app.get("/sub", (req,res)=>{
+app.get("/sub",  passport.authenticate('jwt', { session: false }), (req, res) => {
     try{
      const n1= parseFloat(req.query.n1); 
      const n2= parseFloat(req.query.n2);
@@ -92,7 +116,7 @@ app.get("/sub", (req,res)=>{
       res.status(500).json({statuscocde:500, msg: error.toString() })
     }
 });
-app.get("/mul", (req,res)=>{
+app.get("/mul",  passport.authenticate('jwt', { session: false }), (req, res) => {
   try{
     const n1= parseFloat(req.query.n1); 
     const n2= parseFloat(req.query.n2);
@@ -108,7 +132,7 @@ app.get("/mul", (req,res)=>{
      res.status(500).json({statuscocde:500, msg: error.toString() })
     }
 });
-app.get("/div", (req,res)=>{
+app.get("/div",  passport.authenticate('jwt', { session: false }), (req, res) => {
   try{
    const n1= parseFloat(req.query.n1); 
    const n2= parseFloat(req.query.n2);
