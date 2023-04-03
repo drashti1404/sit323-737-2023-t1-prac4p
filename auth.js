@@ -2,14 +2,10 @@ const passport = require('passport');
 const JWTStrategy = require('passport-jwt').Strategy;
 const ExtractJWT = require('passport-jwt').ExtractJwt;
 
-//const opts = {
- // jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
- // secretOrKey: 'secretKey' // replace with your own secret key
-//};
 const secret= 'secretkey'
 passport.use(new JWTStrategy({
     jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-    secretOrKey: secret // replace with your own secret key
+    secretOrKey: secret 
   }, 
   function (jwtPayload, done)  {
     console.log("Entered stragy");
@@ -29,18 +25,13 @@ const express = require('express');
 const app = express();
 
 // middleware to authenticate requests using the JWT strategy
-//app.use(passport.initialize());
-//app.use(passport.authenticate('jwt', { session: false }));
 
 // route handler that requires authentication and authorization
 const jwt = require('jsonwebtoken');
 
 // generate a JWT token
-//const token = jwt.sign({ username: 'john.doe' }, 'secretKey');
-// Generate a new JWT token
 
 function generateToken(user) {
-//const token = jwt.sign({ username: 'rosy' }, 'secretKey', {expiresIn: '1h'});
 const Payload= { user };
 const token = jwt.sign( Payload , secret, {expiresIn: '1d'});
 return token;
