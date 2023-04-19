@@ -15,18 +15,12 @@ passport.use(new JWTStrategy({
         }
         console.log("Token Valid");
         return done(null, jwtPayload.user);
-  
-    // verify the token and authenticate the request if it's valid
-  // jwtPayload will contain the decoded token payload
-  // done is a callback function that accepts an error as the first argument and the authenticated user as the second argument
+ 
 }));
 
 const express = require('express');
 const app = express();
 
-// middleware to authenticate requests using the JWT strategy
-
-// route handler that requires authentication and authorization
 const jwt = require('jsonwebtoken');
 
 // generate a JWT token
